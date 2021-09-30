@@ -1,34 +1,87 @@
+import java.util.Locale;
 import java.util.Scanner;
 
 
 public class Codebreaking {
     public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
     String alphabet = "abcdefghijklmnopqrstuxwyzæøå";
 
+    System.out.println(ceasarEncoder("hej"));
+    System.out.println(ceasarEncoder("æøå"));
+    System.out.println(ceasarDecoder("æøå"));
+    System.out.println(ceasarDecoder("abc"));
     numberCypherEncoder("hej", alphabet);
+    numberCypherEncoder("abc", alphabet);
+    letterCypherEncoder();
+    }
 
-    System.out.println(letterCypherEncoder(2, alphabet));
-    //System.out.println(letterCypherEncoder(4, alphabet));
-    letterCypherEncoder1(1,alphabet);
+    // metode til at få input fra user.
+    public static String getInputFromUser (){
+            Scanner scanner = new Scanner(System.in);
+            return scanner.nextLine();
+    }
+// encoder til cæsar, den shifter alle bogstaver 3 gange den ene vej.
+    public static char[] ceasarEncoder (String toBeEncoded){
+        int shift = 3; // hvor mange karaktere der shiftes / rykkes.
+        String alphabet = "abcdefghijklmnopqrstuxwyzæøåabc"; // Tilføjede abc som det sidste, in case man ville encode æøå.
+        String lowerCaseString = toBeEncoded.toLowerCase(Locale.ROOT); // Sætter det til små bogstaver så der
+        char[] stringToCharArray = lowerCaseString.toCharArray();
+        char[] encodedCharArray = new char [lowerCaseString.length()];
+        for (int i = 0; i < lowerCaseString.length(); i++) {
+            String charToEncode = stringToCharArray[i] + "";
+            int indexOfCharToEncode = alphabet.indexOf(charToEncode);
+            encodedCharArray[i] = alphabet.charAt(((indexOfCharToEncode)+shift)%alphabet.length());
+            
+        }
+        return encodedCharArray;
 
     }
 
+// decoder, som er samme metoder, men shifter alle bogstaver 3 gange den modsatte vej.
+    public static char[] ceasarDecoder (String toBeEncoded){
+        int shift = 3; // Stadig hvor mange gange vi rykker bogstavet.
+        String alphabet = "abcdefghijklmnopqrstuxwyzæøå";
+        String lowerCaseString = toBeEncoded.toLowerCase(Locale.ROOT);
+        char[] stringToCharArray = lowerCaseString.toCharArray();
+        char[] encodedCharArray = new char [lowerCaseString.length()];
+        for (int i = 0; i < lowerCaseString.length(); i++) {
+            String charToEncode = stringToCharArray[i] + "";
+            int indexOfCharToEncode = alphabet.indexOf(charToEncode);
+            int indexOfCharToBeDecoded = indexOfCharToEncode - shift;
+            if (indexOfCharToBeDecoded < 0){ // if sætning for at forhindre vi får i minus, når vi fx skal encode a, b eller c.
+                indexOfCharToBeDecoded += alphabet.length();
+            }
+            encodedCharArray[i] = alphabet.charAt((indexOfCharToBeDecoded)%alphabet.length());
 
-    public static char letterCypherEncoder (int encoding, String alphabet){
-        while (encoding < 0){
-            encoding = encoding + alphabet.length();
         }
-        char[] alphabetAsChars = alphabet.toCharArray();
-        char encodedNumber = alphabetAsChars[encoding-1];
-        return encodedNumber;
+        return encodedCharArray;
+
     }
 
-    public static void letterCypherEncoder1 (int encoding1, String alphabet){
-
-        for (int i = 0; i < alphabet.length(); i++) {
-            System.out.println(letterCypherEncoder(encoding1, alphabet));
+    // Laver tal til bogstaver :)))
+    public static void letterCypherEncoder (){
+        System.out.println();
+        System.out.println("Please type in the numbers you want encoded in the format of '1,2,3,4,5'.");
+        String stringToEncode = getInputFromUser(); // metode til at få en string.
+        String[] arrayToEncode = stringToEncode.split(","); // sletter alle "," og laver et array.
+        int arrayLength = arrayToEncode.length;
+        int[] arrayEncoded = new int[arrayLength];
+        for (int i = 0; i < arrayLength; i++) {
+            arrayEncoded[i]=Integer.parseInt(arrayToEncode[i]);
         }
+        System.out.println(numberToLetter(arrayEncoded));
+
+    }
+    // anden del af metoden til at lave tal til bogstaver.
+    public static String numberToLetter (int[] arrayToBeEncoded){
+        String alphabet = "abcdefghijklmnopqrstuxwyzæøå";
+        String encodedCypher = "";
+        for (int i = 0; i < arrayToBeEncoded.length; i++) {
+            char encodedChars = alphabet.charAt(arrayToBeEncoded[i]-1); // -1 for at rette index som starter på 0.
+            encodedCypher += encodedChars; // += bygger langsomt stringen op
+
+        }
+        return encodedCypher;
     }
 
 
@@ -44,10 +97,12 @@ public class Codebreaking {
     }
     // bruger metoden over til at tage imod en string, for derefter at køre metoden på hver enkelt bogstav i din string og returnere et tal.
     public static void numberCypherEncoder (String toBeEncoded, String alphabet){
+        Scanner scanner = new Scanner(System.in);
         char[] encodedChar = toBeEncoded.toCharArray();
         for (int i = 0; i < toBeEncoded.length(); i++) {
-            System.out.println(characterToNumber(encodedChar[i], alphabet));
+            System.out.printf(characterToNumber(encodedChar[i], alphabet)+";");
         }
+        System.out.println("");
     }
 
 }
